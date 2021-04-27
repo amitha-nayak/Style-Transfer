@@ -5,7 +5,7 @@ import os
 import argparse
 import torch
 from torch.autograd import Variable
-from torch.optim import Adam, LBFGS
+from torch.optim import Adam
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -57,7 +57,7 @@ def reconstruct_image_from_representation(config):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    img = utils.prepare_img(img_path, config['height'], device)
+    img = utils.prepare_img(img_path, config['height'], config['width'], device)
 
     gaussian_noise_img = np.random.normal(loc=0, scale=90., size=img.shape).astype(np.float32)
     white_noise_img = np.random.uniform(-90., 90., img.shape).astype(np.float32)
@@ -173,19 +173,20 @@ if __name__ == "__main__":
     parser.add_argument("--should_reconstruct_content", type=bool,
                         help="pick between content or style image reconstruction", default=True)
     parser.add_argument("--should_visualize_representation", type=bool,
-                        help="visualize feature maps or Gram matrices", default=False)
+                        help="visualize feature maps or Gram matrices", default=True)
 
     parser.add_argument("--content_img_name", type=str,
                         help="content image name", default='lion.jpg')
     parser.add_argument("--style_img_name", type=str,
                         help="style image name", default='ben_giles.jpg')
     parser.add_argument("--height", type=int,
-                        help="width of content and style images (-1 keep original)", default=500)
+                        help="width of content and style images (-1 keep original)", default=400)
+    parser.add_argument("--width", type=int, help="width of content and style images", default=600)
 
     parser.add_argument("--saving_freq", type=int,
                         help="saving frequency for intermediate images (-1 means only final)", default=50)
-    parser.add_argument("--model", type=str, choices=['vgg16', 'vgg19'], default='vgg19')
-    parser.add_argument("--optimizer", type=str, choices=['lbfgs', 'adam'], default='adam')
+    parser.add_argument("--model", type=str, choices=['vgg19'], default='vgg19')
+    parser.add_argument("--optimizer", type=str, choices=['adam'], default='adam')
     parser.add_argument("--reconstruct_script", type=str,
                         help='dummy param - used in saving func', default=True)
     args = parser.parse_args()

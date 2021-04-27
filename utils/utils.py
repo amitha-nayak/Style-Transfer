@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 
 
-from models.definitions.vgg_nets import Vgg16, Vgg19, Vgg16Experimental
+from models.definitions.vgg_nets import Vgg19
 
 
 IMAGENET_MEAN_255 = [123.675, 116.28, 103.53]
@@ -107,18 +107,11 @@ def get_uint8_range(x):
 # End of image manipulation util functions
 #
 
-
 # initially it takes some time for PyTorch to download the models into local cache
 def prepare_model(model, device):
     # we are not tuning model weights -> we are only tuning optimizing_img's pixels! (that's why requires_grad=False)
     experimental = False
-    if model == 'vgg16':
-        if experimental:
-            # much more flexible for experimenting with different style representations
-            model = Vgg16Experimental(requires_grad=False, show_progress=True)
-        else:
-            model = Vgg16(requires_grad=False, show_progress=True)
-    elif model == 'vgg19':
+    if model == 'vgg19':
         model = Vgg19(requires_grad=False, show_progress=True)
     else:
         raise ValueError(f'{model} not supported.')
